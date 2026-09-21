@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f0f10">
+<title>Fight Club</title>
+<link rel="icon" href="/logo.png">
+<link rel="apple-touch-icon" href="/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0f0f10; --card:#19191b; --card-2:#232326; --line:#2e2e33;
+    --text:#f3f0ea; --muted:#a09d96;
+    --accent:#c8322b; --accent-hover:#de3d35;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom)}
+  a{color:inherit}
+  h1,h2,h3{font-family:'Oswald','Arial Narrow',Impact,sans-serif;font-weight:600;letter-spacing:.02em;text-transform:uppercase;margin:0}
+  .wrap{max-width:720px;margin:0 auto;padding:0 16px}
+
+  .admin-bar{background:var(--accent);color:#fff;font-size:14px;font-weight:600;text-align:center;padding:calc(8px + env(safe-area-inset-top)) 12px 8px}
+  .admin-bar button{background:rgba(0,0,0,.25);color:#fff;border:0;border-radius:6px;padding:4px 10px;margin-left:10px;font:inherit;cursor:pointer}
+
+  header{padding:22px 16px 14px;text-align:center}
+  header img{max-height:130px;max-width:70%;height:auto;display:inline-block}
+
+  nav.tabs{position:sticky;top:0;z-index:10;background:rgba(15,15,16,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  nav.tabs .wrap{display:flex}
+  nav.tabs button{flex:1;background:none;border:0;color:var(--muted);font-family:'Oswald','Arial Narrow',sans-serif;font-weight:500;font-size:17px;letter-spacing:.06em;text-transform:uppercase;padding:14px 4px 11px;border-bottom:3px solid transparent;cursor:pointer}
+  nav.tabs button.active{color:var(--text);border-bottom-color:var(--accent)}
+
+  main{padding:20px 16px 30px}
+  .panel{display:none}
+  .panel.active{display:block}
+  .section-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 14px}
+  .section-head h2{font-size:26px}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-bottom:16px}
+  .card h2{font-size:22px}
+  .card h3{font-size:20px}
+  .sub{color:var(--muted);font-size:14px;margin:4px 0 16px}
+  .small-note{color:var(--muted);font-size:13px;margin:8px 0 16px}
+
+  .field{margin-bottom:14px}
+  label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin:0 0 6px;text-transform:uppercase;letter-spacing:.05em}
+  label .opt{text-transform:none;font-weight:400;letter-spacing:0}
+  input,select,textarea{width:100%;background:var(--card-2);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:12px 14px;font:inherit;font-size:16px}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
+  input[type=date]{color-scheme:dark;min-height:48px}
+  textarea{min-height:110px;resize:vertical}
+  .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--accent);color:#fff;border:1px solid transparent;border-radius:10px;padding:12px 18px;font:600 15px 'Inter',system-ui,sans-serif;text-decoration:none;cursor:pointer;white-space:nowrap}
+  .btn:hover{background:var(--accent-hover)}
+  .btn:disabled{opacity:.6;cursor:default}
+  .btn.block{width:100%}
+  .btn.small{padding:8px 12px;font-size:14px}
+  .btn.ghost{background:transparent;border-color:var(--line);color:var(--text)}
+  .btn.ghost:hover{border-color:var(--muted)}
+  .btn.danger{background:transparent;border-color:#5c2724;color:#ff8f87}
+  .row-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+  .msg{font-size:14px;margin-top:10px}
+  .msg:empty{display:none}
+  .msg.err{color:#ff8f87}
+  .msg.ok{color:#83d9a8}
+
+  .list-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .count{color:var(--muted);font-size:14px}
+  .list-tools{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 6px}
+  .list-tools input{flex:1;min-width:170px}
+  .person{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 0;border-top:1px solid var(--line)}
+  .person:first-child{border-top:0}
+  .person .name{font-weight:600;font-size:17px}
+  .person .phone{color:var(--muted);text-decoration:none}
+  .person .sober{font-size:13px;color:var(--muted)}
+  .empty{color:var(--muted);text-align:center;padding:14px 0;margin:0}
+
+  .meta{color:var(--muted);font-size:15px;margin-top:4px}
+  .meta a{color:var(--text)}
+  .details{white-space:pre-wrap;margin-top:10px;overflow-wrap:anywhere}
+  .details a{color:var(--text)}
+  .item-admin{margin-top:14px}
+
+  .event{display:flex;gap:16px;align-items:flex-start}
+  .datebox{flex:none;width:62px;text-align:center;background:var(--card-2);border:1px solid var(--line);border-radius:10px;padding:8px 0}
+  .datebox .m{font:600 13px 'Oswald',sans-serif;color:var(--accent);text-transform:uppercase;letter-spacing:.08em}
+  .datebox .d{font:600 26px/1.1 'Oswald',sans-serif}
+  details.past{margin-top:8px}
+  details.past summary{cursor:pointer;color:var(--muted);padding:8px 0;font-weight:600}
+  details.past .card{opacity:.7}
+
+  footer{text-align:center;padding:4px 0 34px}
+  footer button{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;font:inherit;font-size:13px}
+
+  dialog{background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:var(--radius);padding:22px;width:min(520px,calc(100% - 32px));max-height:calc(100% - 40px)}
+  dialog::backdrop{background:rgba(0,0,0,.72)}
+  dialog h2{font-size:22px;margin-bottom:16px}
+  .dlg-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:6px}
+
+  .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:#2b2b30;color:var(--text);padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:all .2s;z-index:50;max-width:calc(100% - 32px)}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast.err{background:#5c2724}
+</style>
+</head>
+<body>
+
+<div id="adminBar" class="admin-bar" hidden>Admin mode <button id="logoutBtn" type="button">Log out</button></div>
+
+<header><img src="/logo.png" alt="Fight Club"></header>
+
+<nav class="tabs">
+  <div class="wrap">
+    <button type="button" data-tab="phone">Phone List</button>
+    <button type="button" data-tab="meetings">Meetings</button>
+    <button type="button" data-tab="events">Events</button>
+  </div>
+</nav>
+
+<main class="wrap">
+  <section id="tab-phone" class="panel">
+    <div class="card">
+      <h2>Join the phone list</h2>
+      <p class="sub">Add your name and number so the group can reach you.</p>
+      <form id="joinForm" novalidate>
+        <div class="field">
+          <label for="jName">Name</label>
+          <input id="jName" type="text" autocomplete="name" maxlength="80" required>
+        </div>
+        <div class="field">
+          <label for="jPhone">Phone number</label>
+          <input id="jPhone" type="tel" inputmode="tel" autocomplete="tel" required>
+        </div>
+        <div class="field">
+          <label for="jDate">Sobriety date <span class="opt">(optional)</span></label>
+          <input id="jDate" type="date">
+        </div>
+        <div class="hp" aria-hidden="true">
+          <input id="jWeb" type="text" tabindex="-1" autocomplete="off">
+        </div>
+        <button class="btn block" type="submit">Add me to the list</button>
+        <div class="msg" id="joinMsg"></div>
+      </form>
+    </div>
+    <div class="card" id="listCard"><p class="empty">Loading…</p></div>
+  </section>
+
+  <section id="tab-meetings" class="panel"><div id="meetingsBox"><p class="empty">Loading…</p></div></section>
+  <section id="tab-events" class="panel"><div id="eventsBox"><p class="empty">Loading…</p></div></section>
+</main>
+
+<footer><button id="adminLink" type="button">Admin login</button></footer>
+
+<dialog id="loginDlg">
+  <form id="loginForm">
+    <h2>Admin login</h2>
+    <div class="field">
+      <label for="adminPw">Password</label>
+      <input id="adminPw" type="password" autocomplete="current-password" required>
+    </div>
+    <div class="msg" id="loginMsg"></div>
+    <div class="dlg-actions">
+      <button class="btn ghost" type="button" data-close>Cancel</button>
+      <button class="btn" type="submit">Log in</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="editDlg">
+  <form id="editForm">
+    <h2 id="editTitle">Edit</h2>
+    <div id="editFields"></div>
+    <div class="msg" id="editMsg"></div>
+    <div class="dlg-actions">
+      <button class="btn ghost" type="button" data-close>Cancel</button>
+      <button class="btn" type="submit">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+const linkify = (escaped) => escaped.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+const mapLink = (loc) => `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(loc)}" target="_blank" rel="noopener">${esc(loc)}</a>`;
+
+const state = { admin: false, member: false, members: [], meetings: [], events: [], search: '' };
+
+async function api(query, method = 'GET', body) {
+  const res = await fetch('/api/app?' + query, {
+    method,
+    headers: body ? { 'Content-Type': 'application/json' } : {},
+    body: body ? JSON.stringify(body) : undefined,
+    credentials: 'same-origin',
+  });
+  let data = null;
+  try { data = await res.json(); } catch {}
+  if (!res.ok) throw new Error((data && data.error) || 'Something went wrong. Please try again.');
+  return data;
+}
+
+function toast(text, isErr) {
+  const t = $('#toast');
+  t.textContent = text;
+  t.className = 'toast show' + (isErr ? ' err' : '');
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => { t.className = 'toast'; }, 2800);
+}
+
+function setMsg(el, text, kind) {
+  el.textContent = text || '';
+  el.className = 'msg' + (kind ? ' ' + kind : '');
+}
+
+/* ---------- tabs ---------- */
+const TABS = ['phone', 'meetings', 'events'];
+function showTab(name) {
+  if (!TABS.includes(name)) name = 'phone';
+  document.querySelectorAll('.panel').forEach((p) => p.classList.toggle('active', p.id === 'tab-' + name));
+  document.querySelectorAll('nav.tabs button').forEach((b) => b.classList.toggle('active', b.dataset.tab === name));
+}
+document.querySelectorAll('nav.tabs button').forEach((b) => b.addEventListener('click', () => {
+  history.replaceState(null, '', '#' + b.dataset.tab);
+  showTab(b.dataset.tab);
+  window.scrollTo({ top: 0 });
+}));
+window.addEventListener('hashchange', () => showTab(location.hash.slice(1)));
+
+/* ---------- dates ---------- */
+function parseISO(iso) { const [y, m, d] = iso.split('-').map(Number); return new Date(y, m - 1, d); }
+function fmtDate(iso, opts = { month: 'long', day: 'numeric', year: 'numeric' }) {
+  return parseISO(iso).toLocaleDateString('en-US', opts);
+}
+function todayISO() {
+  const n = new Date();
+  return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, '0')}-${String(n.getDate()).padStart(2, '0')}`;
+}
+function soberFor(iso) {
+  const start = parseISO(iso), now = new Date();
+  let y = now.getFullYear() - start.getFullYear();
+  let m = now.getMonth() - start.getMonth();
+  if (now.getDate() < start.getDate()) m--;
+  if (m < 0) { y--; m += 12; }
+  if (y < 0) return '';
+  if (y === 0 && m === 0) {
+    const days = Math.max(0, Math.floor((now - start) / 86400000));
+    return days + (days === 1 ? ' day' : ' days');
+  }
+  const parts = [];
+  if (y) parts.push(y + (y === 1 ? ' yr' : ' yrs'));
+  if (m) parts.push(m + (m === 1 ? ' mo' : ' mos'));
+  return parts.join(' ');
+}
+
+/* ---------- data ---------- */
+async function refreshSession() {
+  const s = await api('r=session');
+  state.admin = !!s.admin;
+  state.member = !!s.member;
+}
+async function loadTable(t) {
+  if (t === 'members' && !state.member) { state.members = []; return; }
+  state[t] = await api('r=' + t);
+}
+async function loadAll() {
+  await Promise.all(['members', 'meetings', 'events'].map(loadTable));
+}
+
+/* ---------- admin buttons ---------- */
+function adminButtons(table, id) {
+  if (!state.admin) return '';
+  return `<div class="row-actions item-admin">
+    <button class="btn small ghost" type="button" data-edit="${table}" data-id="${esc(id)}">Edit</button>
+    <button class="btn small danger" type="button" data-del="${table}" data-id="${esc(id)}">Delete</button>
+  </div>`;
+}
+
+/* ---------- phone list ---------- */
+function personHTML(m) {
+  const tel = m.phone.replace(/[^\d+]/g, '');
+  let sober = '';
+  if (m.sobriety_date) {
+    const dur = soberFor(m.sobriety_date);
+    sober = `<div class="sober">Sober since ${esc(fmtDate(m.sobriety_date))}${dur ? ' · ' + esc(dur) : ''}</div>`;
+  }
+  const adminBtns = state.admin
+    ? `<button class="btn small ghost" type="button" data-edit="members" data-id="${esc(m.id)}">Edit</button>
+       <button class="btn small danger" type="button" data-del="members" data-id="${esc(m.id)}">Delete</button>`
+    : '';
+  return `<div class="person">
+    <div>
+      <div class="name">${esc(m.name)}</div>
+      <a class="phone" href="tel:${esc(tel)}">${esc(m.phone)}</a>
+      ${sober}
+    </div>
+    <div class="row-actions">
+      <a class="btn small" href="tel:${esc(tel)}">Call</a>
+      <a class="btn small ghost" href="sms:${esc(tel)}">Text</a>
+      <a class="btn small ghost" href="/api/app?r=vcf&id=${encodeURIComponent(m.id)}">Save</a>
+      ${adminBtns}
+    </div>
+  </div>`;
+}
+
+function renderPeople() {
+  const box = $('#people');
+  if (!box) return;
+  const q = state.search.trim().toLowerCase();
+  const rows = state.members.filter((m) => m.name.toLowerCase().includes(q));
+  box.innerHTML = rows.length
+    ? rows.map(personHTML).join('')
+    : `<p class="empty">${state.members.length ? 'No one matches that search.' : 'No one on the list yet.'}</p>`;
+}
+
+function renderList() {
+  const box = $('#listCard');
+
+  if (!state.member) {
+    box.innerHTML = `
+      <h2>Phone list</h2>
+      <p class="sub">Enter the group code to view the list and save it to your phone.</p>
+      <form id="unlockForm" class="list-tools">
+        <input id="codeInput" type="password" placeholder="Group code" autocomplete="off" required>
+        <button class="btn" type="submit">Unlock</button>
+      </form>
+      <div class="msg" id="unlockMsg"></div>`;
+    $('#unlockForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector('button');
+      btn.disabled = true;
+      setMsg($('#unlockMsg'), '');
+      try {
+        await api('r=unlock', 'POST', { code: $('#codeInput').value });
+        state.member = true;
+        await loadTable('members');
+        renderList();
+      } catch (err) {
+        setMsg($('#unlockMsg'), err.message, 'err');
+        btn.disabled = false;
+      }
+    });
+    return;
+  }
+
+  const n = state.members.length;
+  box.innerHTML = `
+    <div class="list-head">
+      <h2>Phone list</h2>
+      <span class="count">${n} ${n === 1 ? 'person' : 'people'}</span>
+    </div>
+    <p class="sub">Tap a number to call or text.</p>
+    <a class="btn block" href="/api/app?r=vcf">Save all to my phone</a>
+    <p class="small-note">iPhone: open the file and tap “Add All Contacts.” Android: open the file and choose your contacts app to import.</p>
+    <div class="list-tools">
+      <input id="searchInput" type="search" placeholder="Search names" value="${esc(state.search)}">
+      ${state.admin ? '<button class="btn ghost" type="button" data-add="members">+ Add</button>' : ''}
+    </div>
+    <div id="people"></div>`;
+  $('#searchInput').addEventListener('input', (e) => { state.search = e.target.value; renderPeople(); });
+  renderPeople();
+}
+
+$('#joinForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const btn = form.querySelector('button[type=submit]');
+  const msg = $('#joinMsg');
+  setMsg(msg, '');
+  btn.disabled = true;
+  try {
+    await api('r=members', 'POST', {
+      name: $('#jName').value,
+      phone: $('#jPhone').value,
+      sobriety_date: $('#jDate').value,
+      website: $('#jWeb').value,
+    });
+    form.reset();
+    setMsg(msg, "You're on the list. Welcome!", 'ok');
+    if (state.member) { await loadTable('members'); renderList(); }
+  } catch (err) {
+    setMsg(msg, err.message, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+/* ---------- meetings ---------- */
+function renderMeetings() {
+  let html = `<div class="section-head"><h2>Meetings</h2>${state.admin ? '<button class="btn small" type="button" data-add="meetings">+ Add meeting</button>' : ''}</div>`;
+  if (!state.meetings.length) {
+    html += '<div class="card"><p class="empty">Meeting info coming soon.</p></div>';
+  } else {
+    html += state.meetings.map((m) => {
+      const when = [m.day_of_week, m.meeting_time].filter(Boolean).join(' · ');
+      return `<div class="card">
+        <h3>${esc(m.title)}</h3>
+        ${when ? `<div class="meta">${esc(when)}</div>` : ''}
+        ${m.location ? `<div class="meta">${mapLink(m.location)}</div>` : ''}
+        ${m.details ? `<div class="details">${linkify(esc(m.details))}</div>` : ''}
+        ${adminButtons('meetings', m.id)}
+      </div>`;
+    }).join('');
+  }
+  $('#meetingsBox').innerHTML = html;
+}
+
+/* ---------- events ---------- */
+function eventHTML(e) {
+  let box = '', when = '';
+  if (e.event_date) {
+    const d = parseISO(e.event_date);
+    box = `<div class="datebox"><div class="m">${d.toLocaleDateString('en-US', { month: 'short' })}</div><div class="d">${d.getDate()}</div></div>`;
+    const opts = { weekday: 'long', month: 'long', day: 'numeric' };
+    if (d.getFullYear() !== new Date().getFullYear()) opts.year = 'numeric';
+    when = fmtDate(e.event_date, opts);
+  }
+  when = [when, e.event_time].filter(Boolean).join(' · ');
+  return `<div class="card"><div class="event">
+    ${box}
+    <div style="flex:1;min-width:0">
+      <h3>${esc(e.title)}</h3>
+      ${when ? `<div class="meta">${esc(when)}</div>` : ''}
+      ${e.location ? `<div class="meta">${mapLink(e.location)}</div>` : ''}
+      ${e.description ? `<div class="details">${linkify(esc(e.description))}</div>` : ''}
+      ${adminButtons('events', e.id)}
+    </div>
+  </div></div>`;
+}
+
+function renderEvents() {
+  const today = todayISO();
+  const upcoming = state.events.filter((e) => !e.event_date || e.event_date >= today);
+  const past = state.events.filter((e) => e.event_date && e.event_date < today).reverse();
+  let html = `<div class="section-head"><h2>Events</h2>${state.admin ? '<button class="btn small" type="button" data-add="events">+ Add event</button>' : ''}</div>`;
+  html += upcoming.length
+    ? upcoming.map(eventHTML).join('')
+    : '<div class="card"><p class="empty">No upcoming events right now. Check back soon.</p></div>';
+  if (past.length) {
+    html += `<details class="past"><summary>Past events (${past.length})</summary>${past.map(eventHTML).join('')}</details>`;
+  }
+  $('#eventsBox').innerHTML = html;
+}
+
+/* ---------- admin editor ---------- */
+const DAYS = ['', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const FORMS = {
+  members: { label: 'person', fields: [
+    { k: 'name', label: 'Name', type: 'text', req: true },
+    { k: 'phone', label: 'Phone', type: 'tel', req: true },
+    { k: 'sobriety_date', label: 'Sobriety date', type: 'date' },
+  ]},
+  meetings: { label: 'meeting', fields: [
+    { k: 'title', label: 'Meeting name', type: 'text', req: true, ph: 'e.g. Tuesday Night Meeting' },
+    { k: 'day_of_week', label: 'Day', type: 'select', options: DAYS },
+    { k: 'meeting_time', label: 'Time', type: 'text', ph: 'e.g. 7:00 PM' },
+    { k: 'location', label: 'Location', type: 'text', ph: 'Address or place name' },
+    { k: 'details', label: 'Details', type: 'textarea', ph: 'Format, parking, Zoom link, contact, etc.' },
+    { k: 'sort_order', label: 'Display order', type: 'number', def: 0, hint: 'Lower numbers show first.' },
+  ]},
+  events: { label: 'event', fields: [
+    { k: 'title', label: 'Event name', type: 'text', req: true },
+    { k: 'event_date', label: 'Date', type: 'date' },
+    { k: 'event_time', label: 'Time', type: 'text', ph: 'e.g. 6:00 PM – 9:00 PM' },
+    { k: 'location', label: 'Location', type: 'text' },
+    { k: 'description', label: 'Description', type: 'textarea' },
+  ]},
+};
+
+let editing = null;
+
+function openEditor(table, id) {
+  const cfg = FORMS[table];
+  const item = id ? state[table].find((x) => x.id === id) : null;
+  editing = { table, id: id || null };
+  $('#editTitle').textContent = (item ? 'Edit ' : 'Add ') + cfg.label;
+  $('#editFields').innerHTML = cfg.fields.map((f) => {
+    const v = item ? (item[f.k] ?? '') : (f.def ?? '');
+    const ph = f.ph ? ` placeholder="${esc(f.ph)}"` : '';
+    let input;
+    if (f.type === 'textarea') {
+      input = `<textarea id="f_${f.k}" name="${f.k}"${ph}>${esc(v)}</textarea>`;
+    } else if (f.type === 'select') {
+      const opts = f.options.includes(v) ? f.options : [...f.options, v];
+      input = `<select id="f_${f.k}" name="${f.k}">${opts.map((o) => `<option value="${esc(o)}"${o === v ? ' selected' : ''}>${esc(o || '—')}</option>`).join('')}</select>`;
+    } else {
+      input = `<input id="f_${f.k}" name="${f.k}" type="${f.type}" value="${esc(v)}"${ph}>`;
+    }
+    const hint = f.hint ? `<div class="small-note" style="margin:6px 0 0">${esc(f.hint)}</div>` : '';
+    return `<div class="field"><label for="f_${f.k}">${esc(f.label)}${f.req ? '' : ' <span class="opt">(optional)</span>'}</label>${input}${hint}</div>`;
+  }).join('');
+  setMsg($('#editMsg'), '');
+  $('#editDlg').showModal();
+}
+
+$('#editForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = e.target.querySelector('button[type=submit]');
+  const data = Object.fromEntries(new FormData(e.target).entries());
+  const { table, id } = editing;
+  btn.disabled = true;
+  try {
+    await api(`r=${table}${id ? '&id=' + encodeURIComponent(id) : ''}`, id ? 'PUT' : 'POST', data);
+    $('#editDlg').close();
+    await loadTable(table);
+    renderAll();
+    toast('Saved');
+  } catch (err) {
+    setMsg($('#editMsg'), err.message, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+async function removeItem(table, id) {
+  const item = state[table].find((x) => x.id === id);
+  const label = item ? (item.name || item.title) : 'this item';
+  if (!confirm(`Delete "${label}"? This can't be undone.`)) return;
+  try {
+    await api(`r=${table}&id=${encodeURIComponent(id)}`, 'DELETE');
+    await loadTable(table);
+    renderAll();
+    toast('Deleted');
+  } catch (err) {
+    toast(err.message, true);
+  }
+}
+
+document.addEventListener('click', (e) => {
+  const closer = e.target.closest('[data-close]');
+  if (closer) { closer.closest('dialog').close(); return; }
+  const t = e.target.closest('[data-add],[data-edit],[data-del]');
+  if (!t) return;
+  if (t.dataset.add) openEditor(t.dataset.add);
+  else if (t.dataset.edit) openEditor(t.dataset.edit, t.dataset.id);
+  else if (t.dataset.del) removeItem(t.dataset.del, t.dataset.id);
+});
+
+/* ---------- login / logout ---------- */
+$('#adminLink').addEventListener('click', () => {
+  $('#loginForm').reset();
+  setMsg($('#loginMsg'), '');
+  $('#loginDlg').showModal();
+});
+
+$('#loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = e.target.querySelector('button[type=submit]');
+  btn.disabled = true;
+  try {
+    await api('r=login', 'POST', { password: $('#adminPw').value });
+    $('#loginDlg').close();
+    await refreshSession();
+    await loadAll();
+    renderAll();
+    toast('Logged in as admin');
+  } catch (err) {
+    setMsg($('#loginMsg'), err.message, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+$('#logoutBtn').addEventListener('click', async () => {
+  try {
+    await api('r=logout', 'POST');
+    await refreshSession();
+    await loadAll();
+    renderAll();
+    toast('Logged out');
+  } catch (err) {
+    toast(err.message, true);
+  }
+});
+
+/* ---------- render ---------- */
+function renderAll() {
+  $('#adminBar').hidden = !state.admin;
+  $('#adminLink').hidden = state.admin;
+  renderList();
+  renderMeetings();
+  renderEvents();
+}
+
+(async () => {
+  showTab(location.hash.slice(1));
+  try {
+    await refreshSession();
+    await loadAll();
+  } catch (err) {
+    toast(err.message, true);
+  }
+  renderAll();
+})();
+</script>
+</body>
+</html>
